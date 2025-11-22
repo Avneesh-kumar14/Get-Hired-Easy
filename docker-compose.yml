@@ -1,0 +1,33 @@
+=version: '3.8'
+name: job-portal 
+
+services:
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    image: abhishekyadav710/job-portal-client:1.0.0  
+    container_name: job-portal-client
+    ports:
+      - "5173:5173"
+    env_file:
+      - ./client/.env
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    image: abhishekyadav710/job-portal-server:1.0.0 
+    container_name: job-portal-server
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server:/app
+      - /app/node_modules
