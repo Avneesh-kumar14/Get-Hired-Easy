@@ -1,0 +1,9 @@
+{
+  "buildCommand": "cd client && npm install && npm run build",
+  "outputDirectory": "client/dist",
+  "env": {
+    "VITE_SERVER_URL": "@vite_server_url",
+    "VITE_CLOUDINARY_CLOUD_NAME": "@vite_cloudinary_cloud_name",
+    "VITE_LOCATION_API": "@vite_location_api"
+  }
+}
