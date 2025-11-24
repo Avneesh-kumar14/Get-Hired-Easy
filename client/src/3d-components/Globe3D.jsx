@@ -58,6 +58,7 @@ const StylizedGlobe = ({ size = 300 }) => {
           varying vec3 vPos;
           varying vec2 vUv;
           uniform float time;
+          uniform float sphereRadius;
           
           void main() {
             vec2 grid = abs(fract(vUv * 60.0) - 0.5);
@@ -70,14 +71,15 @@ const StylizedGlobe = ({ size = 300 }) => {
             vec3 finalColor = mix(color1, color2, pulse);
             
             float alpha = smoothstep(0.15, 0.05, dot) * 0.7;
-            alpha *= (1.0 - abs(vPos.y / (${size}/4.0))) * 2.0;
+            alpha *= (1.0 - abs(vPos.y / sphereRadius)) * 2.0;
             
             gl_FragColor = vec4(finalColor, alpha);
           }
         `,
         transparent: true,
         uniforms: {
-          time: { value: 0 }
+          time: { value: 0 },
+          sphereRadius: { value: size / 4 }
         },
         blending: THREE.AdditiveBlending,
       });
@@ -99,10 +101,10 @@ const StylizedGlobe = ({ size = 300 }) => {
           uniform float time;
           
           void main() {
-            float intensity = pow(0.7 - dot(vNormal, vec3(0, 0, 1.0)), 3.0);
+            float intensity = pow(0.7 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 3.0);
             vec3 color = mix(
-              vec3(0.0, 0.5, 1.0),  // Bright blue
-              vec3(0.0, 1.0, 1.0),  // Cyan
+              vec3(0.0, 0.5, 1.0),
+              vec3(0.0, 1.0, 1.0),
               sin(time * 1.5) * 0.5 + 0.5
             );
             gl_FragColor = vec4(color, 1.0) * intensity * 1.5;
