@@ -66,11 +66,12 @@ export const signup = async (req, res) => {
       success: true,
     });
   } catch (error) {
+    console.error('Signup error:', error);
     res.status(500).json({
       message: "Server error. Please try again later.",
       error: error.message,
+      success: false,
     });
-    console.log(error);
   }
 };
 export const login = async (req, res) => {
@@ -111,10 +112,6 @@ export const login = async (req, res) => {
       path:"/",
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
-    try {
-    } catch (error) {
-      console.log(error.message);
-    }
     res.status(200).json({
       message: `Welcome back ${user.fullName}`,
       user: {
@@ -130,9 +127,11 @@ export const login = async (req, res) => {
       success: true,
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({
       message: "Server error. Please try again later.",
       error: error.message,
+      success: false,
     });
   }
 };
