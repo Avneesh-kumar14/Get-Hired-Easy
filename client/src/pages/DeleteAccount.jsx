@@ -28,7 +28,7 @@ const DeleteAccount = ({ isOpen, onOpenChange }) => {
         }
         onOpenChange(false);
     } catch (error) {
-        toast.error(error.response.data.message)
+        toast.error(error.response?.data?.message || 'Failed to delete account');
     } finally{
         setIsLoading(false);
     }

@@ -13,7 +13,7 @@ const Logout = ({ open, onOpenChange }) => {
   const navigate=useNavigate();
   const [isLoading,setIsLoading]=useState(false)
   const handleLogout = async () => {
-    setIsLoading(false)
+    setIsLoading(true)
     try {
       const response = await apiClient.delete(LOGOUT_ROUTE, {
         withCredentials: true,
@@ -25,9 +25,9 @@ const Logout = ({ open, onOpenChange }) => {
       }
       onOpenChange(false);
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || 'Logout failed');
     }finally{
-      setIsLoading(true)
+      setIsLoading(false)
     }
   };
 
