@@ -1,8 +1,14 @@
-FROM node:18-alpine as server
+FROM node:18-alpine
+
 WORKDIR /app
-COPY server/package*.json ./
-RUN npm install
-COPY server .
-EXPOSE 8000
-CMD ["npm", "run", "dev"]
+
+COPY package*.json ./
+
+RUN npm install --production
+
+COPY . .
+
+EXPOSE 8200
+
+CMD ["npm", "start"]
  
