@@ -60,14 +60,14 @@ const Signup = () => {
     try {
       const formDataToSend = new FormData();
       for (const key in formData) {
+        if (key === "file" && formData[key] === null) {
+          continue; // Skip null file
+        }
         formDataToSend.append(key, formData[key]);
       }
 
       const response = await apiClient.post(SIGNUP_ROUTE, formDataToSend, {
         withCredentials: true,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
       });
 
       if (response.data.success) {
