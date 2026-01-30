@@ -1,5 +1,4 @@
 {
-  "projectName": "get-hired-easy-frontend",
   "buildCommand": "npm install && npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
