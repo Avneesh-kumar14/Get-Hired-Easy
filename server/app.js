@@ -17,39 +17,30 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, ".env") });
 
 const PORT = process.env.PORT || 3000;
-// const _dirname = path.resolve();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
+// ✅ CRITICAL: CORS MUST be configured BEFORE routes and BEFORE json parser
 const corsOption = {
-  origin: function (origin, callback) {
-    // List of allowed origins
-    const allowedOrigins = [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://localhost:3000",
-      process.env.CLIENT_URL,
-    ].filter(Boolean); // Remove undefined/null values
-
-    // Allow requests with no origin (mobile apps, Postman, curl requests)
-    if (!origin) {
-      return callback(null, true);
-    }
-
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.warn(`CORS request blocked for origin: ${origin}`);
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:3000",
+    "https://get-hired-easy-onu8ltvgj-avneesh-kumar-s-projects.vercel.app"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 };
 
-app.use(cors(corsOption)); 
+// ✅ Apply CORS to all routes (handles preflight)
+app.use(cors(corsOption));
+
+// ✅ MANDATORY: Handle OPTIONS requests explicitly
+app.options("*", cors(corsOption));
+
+// Now add other middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser()); 
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/company", companyRoute);
