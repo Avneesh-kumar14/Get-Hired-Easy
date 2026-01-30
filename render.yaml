@@ -3,36 +3,35 @@ services:
     name: get-hired-easy-backend
     env: node
     plan: free
-    buildCommand: cd server && npm install
-    startCommand: cd server && node app.js
+    buildCommand: npm install
+    startCommand: npm start
+    rootDir: server
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 8000
+        value: 8200
       - key: MONGODB_URL
         sync: false
       - key: SECRET_KEY
         sync: false
       - key: CLIENT_URL
-        value: https://get-hired-easy.vercel.app
+        value: https://your-frontend.vercel.app
       - key: CLOUD_NAME
         sync: false
-      - key: CLOUD_API_KEY
+      - key: API_KEY
         sync: false
-      - key: CLOUD_API_SECRET
+      - key: API_SECRET
         sync: false
-      - key: SMTP_HOST
+      - key: EMAIL_USER
         sync: false
-      - key: SMTP_PORT
+      - key: PASS_USER
         sync: false
-      - key: SMTP_USER
-        sync: false
-      - key: SMTP_PASS
+      - key: SESSION_SECRET
         sync: false
       - key: GOOGLE_CLIENT_ID
         sync: false
       - key: GOOGLE_CLIENT_SECRET
         sync: false
-      - key: SESSION_SECRET
+      - key: SMTP_PASS
         sync: false
