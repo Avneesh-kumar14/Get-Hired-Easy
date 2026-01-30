@@ -83,7 +83,8 @@
   @apply bg-white bg-opacity-95 dark:bg-slate-900 dark:bg-opacity-95;
   @apply rounded-lg shadow-xl p-6;
   @apply border border-primary/10 dark:border-primary/20;
-  backdrop-filter : blur(10px);
+} 
+.light .content-overlay {
   background: rgba(255, 255, 255, 0.95) !important;
 }
 
