@@ -1,8 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap");
 @tailwind base;
-@tailwind components;
+@tailwind components; 
 @tailwind utilities;
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -84,7 +83,7 @@
   @apply bg-white bg-opacity-95 dark:bg-slate-900 dark:bg-opacity-95;
   @apply rounded-lg shadow-xl p-6;
   @apply border border-primary/10 dark:border-primary/20;
-  backdrop-filter: blur(10px);
+  backdrop-filter : blur(10px);
   background: rgba(255, 255, 255, 0.95) !important;
 }
 
