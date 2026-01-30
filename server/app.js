@@ -10,34 +10,47 @@ import companyRoute from "./routes/company-routes.js";
 import jobRoute from "./routes/job-routes.js";
 import applicationRoute from "./routes/application-route.js";
 import reportIssueRoute from "./routes/report-issue-route.js";
+
 const app = express();
-// ensure dotenv loads the `.env` file that lives next to this file
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, ".env") });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 
-// ✅ CRITICAL: CORS MUST be configured BEFORE routes and BEFORE json parser
-const corsOption = {
-  origin: [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:3000",
-    "https://get-hired-easy-onu8ltvgj-avneesh-kumar-s-projects.vercel.app"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+// Allowed origins for CORS
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:3000",
+  "https://get-hired-easy.vercel.app",
+  "https://get-hired-easy-onu8ltvgj-avneesh-kumar-s-projects.vercel.app",
+  process.env.CLIENT_URL
+].filter(Boolean);
+
+// CORS Configuration (MUST be first middleware)
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile, Postman, curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS blocked: ${origin}`));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
+  optionsSuccessStatus: 200
 };
 
-// ✅ Apply CORS to all routes (handles preflight)
-app.use(cors(corsOption));
+// Apply CORS before all routes and middleware
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
-// ✅ MANDATORY: Handle OPTIONS requests explicitly
-app.options("*", cors(corsOption));
-
-// Now add other middleware
+// Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); 
