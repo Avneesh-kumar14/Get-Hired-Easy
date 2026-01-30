@@ -184,8 +184,6 @@ const StylizedGlobe = ({ size = 300 }) => {
         transparent: true,
         opacity: 0.75,
         sizeAttenuation: true,
-        emissive: 0x00a3cc,
-        emissiveIntensity: 0.4,
       });
 
       particles = new THREE.Points(particlesGeometry, particlesMaterial);

@@ -69,77 +69,78 @@ export const PostJob = async (req, res) => {
 export const getAllJobs = async (req, res) => {
   try {
     const keyword = req.query.keyword || "";
-    const keywordPatterns = keyword
-      .split(" ")
-      .map((word) => {
-        const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        return `(${escaped})`;
-      })
-      .join("[-\\s]?/?[-\\s]?");
+    
+    // Build regex pattern - handle empty keyword
+    let keywordPatterns = ".*";
+    if (keyword && keyword.trim()) {
+      const words = keyword.split(" ").filter(w => w.trim());
+      if (words.length > 0) {
+        const escaped = words.map(word => word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+        keywordPatterns = escaped.join("|");
+      }
+    }
 
-      let jobs = await JobModel.aggregate([
-        // Lookup for company data
-        {
-          $lookup: {
-            from: "companies",
-            localField: "company",
-            foreignField: "_id",
-            as: "companyData",
-          },
+    const pipeline = [
+      {
+        $lookup: {
+          from: "companies",
+          localField: "company",
+          foreignField: "_id",
+          as: "companyData",
         },
-        // Lookup for application data
-        {
-          $lookup: {
-            from: "applications",
-            localField: "_id",
-            foreignField: "job", 
-            as: "applications",
-          },
+      },
+      {
+        $lookup: {
+          from: "applications",
+          localField: "_id",
+          foreignField: "job",
+          as: "applications",
         },
-        // Match jobs based on keyword patterns in specified fields
-        {
-          $match: {
-            $or: [
-              { title: { $regex: keywordPatterns, $options: "i" } },
-              { description: { $regex: keywordPatterns, $options: "i" } },
-              { jobType: { $regex: keywordPatterns, $options: "i" } },
-              { "companyData.name": { $regex: keywordPatterns, $options: "i" } },
-              { "companyData.website": { $regex: keywordPatterns, $options: "i" } },
-              { "companyData.location": { $regex: keywordPatterns, $options: "i" } },
-            ],
-          },
+      },
+      {
+        $match: {
+          $or: [
+            { title: { $regex: keywordPatterns, $options: "i" } },
+            { description: { $regex: keywordPatterns, $options: "i" } },
+            { jobType: { $regex: keywordPatterns, $options: "i" } },
+            { "companyData.name": { $regex: keywordPatterns, $options: "i" } },
+            { "companyData.website": { $regex: keywordPatterns, $options: "i" } },
+            { "companyData.location": { $regex: keywordPatterns, $options: "i" } },
+          ],
         },
-        // Sort jobs by creation date in descending order
-        {
-          $sort: { createdAt: -1 },
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $addFields: {
+          company: { $arrayElemAt: ["$companyData", 0] },
         },
-        // Add the company data as a single object instead of an array
-        {
-          $addFields: {
-            company: { $arrayElemAt: ["$companyData", 0] },
-          },
+      },
+      {
+        $project: {
+          companyData: 0,
         },
-        // Project fields to exclude companyData array after adding it as a single object
-        {
-          $project: {
-            companyData: 0,
-          },
-        },
-      ]);
-      
+      },
+    ];
+
+    let jobs = await JobModel.aggregate(pipeline);
+
     if (!jobs || jobs.length === 0) {
       return res.status(200).json({
         message: "No Job Found",
         success: true,
+        jobs: [],
       });
     }
-    jobs = jobs?.filter((job) => new Date(job?.expiryDate) >= Date.now());
+
+    jobs = jobs.filter((job) => new Date(job.expiryDate) >= Date.now());
     return res.status(200).json({
       jobs,
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("getAllJobs error:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -169,6 +170,11 @@ export const getJobById = async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+      error: error.message,
+    });
   }
 };
 export const getAdminJobs = async (req, res) => {
