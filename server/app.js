@@ -10,6 +10,7 @@ import companyRoute from "./routes/company-routes.js";
 import jobRoute from "./routes/job-routes.js";
 import applicationRoute from "./routes/application-route.js";
 import reportIssueRoute from "./routes/report-issue-route.js";
+import locationRoute from "./routes/location-routes.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -60,6 +61,7 @@ app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/report/issue", reportIssueRoute);
+app.use("/api/v1/location", locationRoute);
 
 // app.use(express.static(path.join(_dirname, "/client/dist")));
 // app.get("*", (_, res) => {

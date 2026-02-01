@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_TOKEN = import.meta.env.VITE_LOCATION_API;
-const BASE_URL = 'https://www.universal-tutorial.com/api';
+const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
 
 export const useLocationData = () => {
   const [authToken, setAuthToken] = useState('');
@@ -19,13 +18,7 @@ export const useLocationData = () => {
 
   const getAuthToken = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/getaccesstoken`, {
-        headers: {
-          "Accept": "application/json",
-          "api-token": API_TOKEN,
-          "user-email": "abhishekyadav7102004@gmail.com"
-        }
-      });
+      const response = await axios.get(`${BACKEND_URL}/location/auth-token`);
       setAuthToken(response.data.auth_token);
       fetchCountries(response.data.auth_token);
     } catch (error) {
@@ -35,7 +28,7 @@ export const useLocationData = () => {
 
   const fetchCountries = async (token) => {
     try {
-      const response = await axios.get(`${BASE_URL}/countries/`, {
+      const response = await axios.get(`${BACKEND_URL}/location/countries`, {
         headers: {
           "Authorization": `Bearer ${token}`,
           "Accept": "application/json"
@@ -49,7 +42,7 @@ export const useLocationData = () => {
 
   const fetchStates = async (country) => {
     try {
-      const response = await axios.get(`${BASE_URL}/states/${country}`, {
+      const response = await axios.get(`${BACKEND_URL}/location/states/${country}`, {
         headers: {
           "Authorization": `Bearer ${authToken}`,
           "Accept": "application/json"
@@ -63,7 +56,7 @@ export const useLocationData = () => {
 
   const fetchCities = async (state) => {
     try {
-      const response = await axios.get(`${BASE_URL}/cities/${state}`, {
+      const response = await axios.get(`${BACKEND_URL}/location/cities/${state}`, {
         headers: {
           "Authorization": `Bearer ${authToken}`,
           "Accept": "application/json"
