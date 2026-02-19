@@ -68,6 +68,32 @@ const userSchema = new mongoose.Schema(
         default: "",
       },
     },
+    resumeAnalysis: {
+      suggestions: [
+        {
+          category: {
+            type: String,
+            enum: ["skills", "format", "content", "keywords", "structure"],
+          },
+          title: String,
+          description: String,
+          priority: {
+            type: String,
+            enum: ["high", "medium", "low"],
+            default: "medium",
+          },
+        },
+      ],
+      score: {
+        type: Number,
+        min: 0,
+        max: 100,
+        default: 0,
+      },
+      analyzedAt: Date,
+      analyzedResume: String,
+      analyzedResumeOriginalName: String,
+    },
 
   },
   { timestamps: true }

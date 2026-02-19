@@ -56,6 +56,43 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validation
+    if (!formData.fullName) {
+      toast.error("Please enter your full name");
+      return;
+    }
+    if (!formData.email) {
+      toast.error("Please enter your email");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    if (!formData.phoneNumber) {
+      toast.error("Please enter your phone number");
+      return;
+    }
+    const phoneRegex = /^\d{10,11}$/;
+    if (!phoneRegex.test(formData.phoneNumber.replace(/\D/g, ""))) {
+      toast.error("Please enter a valid 10-11 digit phone number");
+      return;
+    }
+    if (!formData.password) {
+      toast.error("Please enter a password");
+      return;
+    }
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+    }
+    if (!formData.role) {
+      toast.error("Please select your role (Student or Recruiter)");
+      return;
+    }
+    
     setIsLoading(true);
     try {
       const formDataToSend = new FormData();
@@ -194,7 +231,8 @@ const Signup = () => {
             >
               <Button
                 type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition-all ease-in-out duration-150"
+                disabled={!formData.fullName || !formData.email || !formData.phoneNumber || !formData.password || !formData.role || isLoading}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition-all ease-in-out duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">

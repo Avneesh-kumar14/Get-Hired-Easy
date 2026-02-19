@@ -21,15 +21,71 @@ export const signup = async (req, res) => {
       profilePictureurl = await cloudinary.uploader.upload(fileUri.content);
     }
     if (!fullName || !email || !phoneNumber || !role || !password) {
+      const missing = [];
+      if (!fullName) missing.push("name");
+      if (!email) missing.push("email");
+      if (!phoneNumber) missing.push("phone");
+      if (!role) missing.push("role");
+      if (!password) missing.push("password");
       return res
         .status(400)
-        .json({ message: "All fields are required.", success: false });
+        .json({ 
+          message: `Missing required fields: ${missing.join(", ")}. Please fill all fields to continue.`,
+          success: false 
+        });
     }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res
+        .status(400)
+        .json({ 
+          message: "Please enter a valid email address.",
+          success: false 
+        });
+    }
+
+    // Validate phone format
+    const phoneRegex = /^\d{10,11}$/;
+    if (!phoneRegex.test(phoneNumber.replace(/\D/g, ""))) {
+      return res
+        .status(400)
+        .json({ 
+          message: "Please enter a valid 10-11 digit phone number.",
+          success: false 
+        });
+    }
+
+    // Validate password strength
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ 
+          message: "Password must be at least 6 characters long.",
+          success: false 
+        });
+    }
+
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
       return res
         .status(400)
-        .json({ message: "Email already in use.", success: false });
+        .json({ 
+          message: "This email is already registered. Please use a different email or try logging in.",
+          success: false 
+        });
+    }
+
+    // Check for duplicate phone number
+    const existingPhone = await UserModel.findOne({ phoneNumber });
+    if (existingPhone) {
+      return res
+        .status(400)
+        .json({ 
+          message: "This phone number is already registered. Please use a different number.",
+          success: false 
+        });
     }
 
     const hashedPassword = await hashPassword(password);
@@ -61,7 +117,7 @@ export const signup = async (req, res) => {
       profile: newUser.profile,
     };
     res.status(201).json({
-      message: "User created successfully.",
+      message: "Account created successfully. Welcome!",
       user,
       success: true,
     });
@@ -79,8 +135,12 @@ export const login = async (req, res) => {
     const { email, password, role } = req.body;
 
     if (!email || !password || !role) {
+      const missing = [];
+      if (!email) missing.push("email");
+      if (!password) missing.push("password");
+      if (!role) missing.push("role");
       return res.status(400).json({
-        message: "Email and password and Role are required.",
+        message: `Missing required fields: ${missing.join(", ")}. Please fill all fields to continue.`,
         success: false,
       });
     }
@@ -89,18 +149,18 @@ export const login = async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({ message: "User Not Found.", success: false });
+        .json({ message: "No account found with this email. Please sign up first.", success: false });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res
         .status(400)
-        .json({ message: "Invalid credentials.", success: false });
+        .json({ message: "Incorrect password. Please try again.", success: false });
     }
     if (role !== user.role) {
       return res.status(400).json({
-        message: "Account doesn't exist with this Role.",
+        message: `This email is registered as a ${user.role}, not as a ${role}. Please select the correct role.`,
         success: false,
       });
     }
@@ -138,8 +198,11 @@ export const login = async (req, res) => {
 export const loginByOtp = async (req, res) => {
   const { email, role } = req.body;
   if (!email || !role) {
+    const missing = [];
+    if (!email) missing.push("email");
+    if (!role) missing.push("role");
     return res.status(400).json({
-      message: "Email and role are required.",
+      message: `Missing required fields: ${missing.join(", ")}. Please fill all fields to continue.`,
       success: false,
     });
   }
@@ -148,14 +211,14 @@ export const loginByOtp = async (req, res) => {
     const user = await UserModel.findOne({ email });
     if (!user) {
       return res.status(400).json({
-        message: "User Not Found.",
+        message: "No account found with this email. Please sign up first.",
         success: false,
       });
     }
 
     if (role !== user.role) {
       return res.status(400).json({
-        message: "Account doesn't exist with this Role.",
+        message: `This email is registered as a ${user.role}, not as a ${role}. Please select the correct role.`,
         success: false,
       });
     }
@@ -174,12 +237,13 @@ export const loginByOtp = async (req, res) => {
     }
 
     return res.status(200).json({
-      message: "OTP sent successfully",
+      message: "OTP sent successfully to your email. It will expire in 5 minutes.",
       success: true,
     });
   } catch (error) {
+    console.error("OTP generation error:", error);
     return res.status(500).json({
-      message: "Error sending OTP",
+      message: "Error sending OTP. Please try again later.",
       success: false,
       error: error.message,
     });

@@ -24,6 +24,7 @@ import Applicants from "./admin/Applicants";
 import { useSelector } from "react-redux";
 import ErrorPage from "./pages/ErrorPage";
 import ReportIssue from "./pages/ReportIssue";
+import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
@@ -38,6 +39,7 @@ const Layout = () => {
     <div className="min-h-screen text-gray-900 dark:text-white">
       <ScrollToTop/>
       <Navbar />
+      <ResumeAnalyzer />
       <div className="px-6 lg:px-20">
         <Outlet />
       </div>

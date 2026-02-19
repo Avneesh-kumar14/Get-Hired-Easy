@@ -27,4 +27,10 @@ export const CHANGE_PASSWORD_ROUTE=`${USER_ROUTE}/change-password`
 export const HANDLE_DELETE_ACCOUNT_ROUTE=`${USER_ROUTE}/delete`
 export const ISSUE_ROUTE="/api/v1/report/issue"
 export const POST_ISSUE_ROUTE=`${ISSUE_ROUTE}/post`
+export const RESUME_ROUTE="/api/v1/resume"
+export const ANALYZE_RESUME_ROUTE=`${RESUME_ROUTE}/analyze`
+export const GET_RESUME_ANALYSIS_ROUTE=`${RESUME_ROUTE}/analysis`
+export const UPLOAD_IMPROVED_RESUME_ROUTE=`${RESUME_ROUTE}/upload-improved`
+export const APPLY_ANALYZED_RESUME_ROUTE=`${RESUME_ROUTE}/apply-to-profile`
+export const CLEAR_RESUME_ANALYSIS_ROUTE=`${RESUME_ROUTE}/analysis`
 export const DUMMY_PROFILE_URL="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQADjfoADAlJPrsl_hiiOMeE-FBor-i6hEAVg&s"

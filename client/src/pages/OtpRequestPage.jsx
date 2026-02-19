@@ -28,11 +28,22 @@ const OtpRequestPage = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validation
+    if (!formData.email) {
+      toast.error("Please enter your email");
+      return;
+    }
+    if (!formData.role) {
+      toast.error("Please select your role (Student or Recruiter)");
+      return;
+    }
+    
     setIsLoading(true);
     try {
       const response = await apiClient.post(
         REQUEST_OTP_ROUTE,
-        { ...formData, purpose },
+        { email: formData.email, role: formData.role, purpose },
         {
           withCredentials: true,
         }
@@ -43,7 +54,8 @@ const OtpRequestPage = ({
       }
     } catch (error) {
       console.error("Error sending OTP:", error);
-      toast.error("Failed to send OTP. Please try again.");
+      const errorMessage = error.response?.data?.message || "Failed to send OTP. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -151,8 +163,8 @@ const OtpRequestPage = ({
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                disabled={isLoading}
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200 ease-in-out shadow-md"
+                disabled={!formData.email || !formData.role || isLoading}
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ease-in-out shadow-md"
               >
                 {isLoading ? (
                   <motion.div

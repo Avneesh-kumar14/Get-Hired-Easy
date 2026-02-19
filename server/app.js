@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import connectDB from "./utils/db.js";
@@ -11,6 +12,9 @@ import jobRoute from "./routes/job-routes.js";
 import applicationRoute from "./routes/application-route.js";
 import reportIssueRoute from "./routes/report-issue-route.js";
 import locationRoute from "./routes/location-routes.js";
+import resumeAnalyzerRoute from "./routes/resume-analyzer-routes.js";
+import { generalLimiter } from "./middleware/rateLimiter.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -51,6 +55,12 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
+// Apply Helmet for security headers (must be before other middleware)
+app.use(helmet());
+
+// Apply general rate limiter to all routes
+app.use(generalLimiter);
+
 // Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -62,8 +72,18 @@ app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/report/issue", reportIssueRoute);
 app.use("/api/v1/location", locationRoute);
+app.use("/api/v1/resume", resumeAnalyzerRoute);
 
-// app.use(express.static(path.join(_dirname, "/client/dist")));
+// 404 handler for unknown routes
+app.use((req, res) => {
+  res.status(404).json({
+    message: "Route not found.",
+    success: false,
+  });
+});
+
+// Global error handler (must be last)
+app.use(errorHandler);
 // app.get("*", (_, res) => {
 //   res.sendFile(path.resolve(_dirname, "client", "dist", "index.html"));
 // });

@@ -50,6 +50,21 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validation
+    if (!formData.email) {
+      toast.error("Please enter your email");
+      return;
+    }
+    if (!formData.password) {
+      toast.error("Please enter your password");
+      return;
+    }
+    if (!formData.role) {
+      toast.error("Please select your role (Student or Recruiter)");
+      return;
+    }
+    
     setIsLoading(true);
     try {
       const response = await apiClient.post(LOGIN_ROUTE, formData, {
@@ -142,7 +157,8 @@ const Login = () => {
               >
                 <Button
                   type="submit"
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition-all ease-in-out duration-150"
+                  disabled={!formData.email || !formData.password || !formData.role || isLoading}
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition-all ease-in-out duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <div className="flex items-center justify-center">
