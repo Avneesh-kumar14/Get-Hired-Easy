@@ -1,4 +1,4 @@
-import rateLimit from "express-rate-limit";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 
 /**
  * General login rate limiter
@@ -30,7 +30,7 @@ export const resumeAnalysisLimiter = rateLimit({
   legacyHeaders: false,
   keyGenerator: (req, res) => {
     // Rate limit by user ID if authenticated, otherwise by IP
-    return req.userId || req.ip;
+    return req.userId || ipKeyGenerator(req, res);
   },
 });
 
