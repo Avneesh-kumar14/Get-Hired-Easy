@@ -28,6 +28,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { addUser } from "@/store/slices/authSlice";
 import { toast } from "sonner";
+import ClearAnalysisDialog from "./ClearAnalysisDialog";
 
 const ResumeAnalyzer = () => {
   const { user } = useSelector((store) => store.auth);
@@ -41,6 +42,8 @@ const ResumeAnalyzer = () => {
   const [isApplying, setIsApplying] = useState(false);
   const [improvedFile, setImprovedFile] = useState(null);
   const [step, setStep] = useState("upload"); // upload, analyzing, results
+  const [showClearDialog, setShowClearDialog] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
 
   // Load existing analysis on mount
   useEffect(() => {
@@ -59,7 +62,7 @@ const ResumeAnalyzer = () => {
         setStep("results");
       }
     } catch (error) {
-      console.error("Error loading analysis:", error);
+      // Error loading existing analysis
     }
   };
 
@@ -100,8 +103,8 @@ const ResumeAnalyzer = () => {
         toast.success("Resume analyzed successfully!");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Error analyzing resume");
-      console.error("Analysis error:", error);
+      const errorMsg = error.response?.data?.message || "Error analyzing resume";
+      toast.error(errorMsg);
     } finally {
       setIsAnalyzing(false);
     }
@@ -143,10 +146,8 @@ const ResumeAnalyzer = () => {
         setImprovedFile(null);
       }
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Error uploading improved resume"
-      );
-      console.error("Upload error:", error);
+      const errorMsg = error.response?.data?.message || "Error uploading improved resume";
+      toast.error(errorMsg);
     } finally {
       setIsUploading(false);
     }
@@ -168,20 +169,19 @@ const ResumeAnalyzer = () => {
         toast.success("Improved resume applied to your profile!");
       }
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Error applying resume to profile"
-      );
-      console.error("Apply error:", error);
+      const errorMsg = error.response?.data?.message || "Error applying resume to profile";
+      toast.error(errorMsg);
     } finally {
       setIsApplying(false);
     }
   };
 
-  const handleClearAnalysis = async () => {
-    if (!window.confirm("Are you sure you want to clear the analysis?")) {
-      return;
-    }
+  const handleClearAnalysisClick = () => {
+    setShowClearDialog(true);
+  };
 
+  const handleClearAnalysis = async () => {
+    setIsClearing(true);
     try {
       const response = await apiClient.delete(CLEAR_RESUME_ANALYSIS_ROUTE, {
         withCredentials: true,
@@ -193,10 +193,12 @@ const ResumeAnalyzer = () => {
         setImprovedFile(null);
         setStep("upload");
         toast.success("Analysis cleared!");
+        setShowClearDialog(false);
       }
     } catch (error) {
-      toast.error("Error clearing analysis");
-      console.error("Clear error:", error);
+      toast.error("Failed to clear analysis. Please try again.");
+    } finally {
+      setIsClearing(false);
     }
   };
 
@@ -313,7 +315,7 @@ const ResumeAnalyzer = () => {
                     onImprovedFileUpload={handleImprovedFileUpload}
                     onUploadImproved={handleUploadImprovedResume}
                     onApplyToProfile={handleApplyToProfile}
-                    onClear={handleClearAnalysis}
+                    onClear={handleClearAnalysisClick}
                     getPriorityColor={getPriorityColor}
                     getCategoryIcon={getCategoryIcon}
                     getScoreColor={getScoreColor}
@@ -324,6 +326,14 @@ const ResumeAnalyzer = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Clear Analysis Dialog */}
+      <ClearAnalysisDialog 
+        open={showClearDialog}
+        onOpenChange={setShowClearDialog}
+        onConfirm={handleClearAnalysis}
+        isLoading={isClearing}
+      />
     </>
   );
 };

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { apiClient } from "@/lib/apiClient";
 import { GET_RESUME_ANALYSIS_ROUTE } from "@/utils/constants";
+import { toast } from "sonner";
 
 export const useGetResumeAnalysis = () => {
   const dispatch = useDispatch();
@@ -15,12 +16,11 @@ export const useGetResumeAnalysis = () => {
             withCredentials: true,
           });
           if (response.data.success && response.data.analysis) {
-            // You can dispatch this to a slice if needed
-            console.log("Resume Analysis:", response.data.analysis);
+            // Resume analysis loaded successfully
           }
         }
       } catch (error) {
-        console.error("Error fetching resume analysis:", error);
+        toast.error("Failed to load resume analysis");
       }
     };
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { toast } from 'sonner';
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
 
@@ -22,7 +23,7 @@ export const useLocationData = () => {
       setAuthToken(response.data.auth_token);
       fetchCountries(response.data.auth_token);
     } catch (error) {
-      console.error('Error getting auth token:', error);
+      // Auth token fetch failed - user can retry
     }
   };
 
@@ -36,7 +37,7 @@ export const useLocationData = () => {
       });
       setCountries(response.data);
     } catch (error) {
-      console.error('Error fetching countries:', error);
+      // Failed to fetch countries
     }
   };
 
@@ -50,7 +51,7 @@ export const useLocationData = () => {
       });
       setStates(response.data);
     } catch (error) {
-      console.error('Error fetching states:', error);
+      toast.error("Failed to load states. Please try selecting the country again.");
     }
   };
 
@@ -64,7 +65,7 @@ export const useLocationData = () => {
       });
       setCities(response.data);
     } catch (error) {
-      console.error('Error fetching cities:', error);
+      toast.error("Failed to load cities. Please try selecting the state again.");
     }
   };
 
