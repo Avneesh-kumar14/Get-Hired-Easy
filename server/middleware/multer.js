@@ -60,6 +60,37 @@ const imageFileFilter = (req, file, cb) => {
   cb(null, true);
 };
 
+/**
+ * File filter for profile updates (both resume and profile image)
+ */
+const profileUpdateFileFilter = (req, file, cb) => {
+  // Allow both resume and image files
+  const allowedTypes = [...ALLOWED_RESUME_TYPES, ...ALLOWED_IMAGE_TYPES];
+  
+  if (!allowedTypes.includes(file.mimetype)) {
+    return cb(
+      new Error(
+        "Invalid file type. Only PDF, DOCX, JPEG, PNG, and GIF files are allowed."
+      ),
+      false
+    );
+  }
+
+  // Check file size based on type
+  const isResume = ALLOWED_RESUME_TYPES.includes(file.mimetype);
+  const maxSize = isResume ? MAX_RESUME_SIZE : MAX_IMAGE_SIZE;
+
+  if (file.size > maxSize) {
+    const limit = isResume ? "2MB" : "5MB";
+    return cb(
+      new Error(`File size exceeds maximum limit of ${limit}.`),
+      false
+    );
+  }
+
+  cb(null, true);
+};
+
 // Resume upload with validation
 export const singleUpload = multer({
   storage,
@@ -72,9 +103,9 @@ export const singleUpload = multer({
 // Multiple uploads with validation
 export const multipleUpload = multer({
   storage,
-  fileFilter: imageFileFilter,
+  fileFilter: profileUpdateFileFilter,
   limits: {
-    fileSize: MAX_IMAGE_SIZE,
+    fileSize: Math.max(MAX_RESUME_SIZE, MAX_IMAGE_SIZE),
   },
 }).fields([
   { name: "resume", maxCount: 1 },

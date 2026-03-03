@@ -61,7 +61,7 @@ export const errorHandler = (err, req, res, next) => {
   }
 
   // File validation errors
-  if (err.message && err.message.includes("Invalid file type")) {
+  if (err.message && (err.message.includes("Invalid file type") || err.message.includes("Invalid image type") || err.message.includes("exceeds maximum limit"))) {
     return res.status(400).json({
       message: err.message,
       success: false,

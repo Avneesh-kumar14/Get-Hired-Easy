@@ -14,7 +14,7 @@ import JobsTable from "./JobsTable";
 import { useSelector } from "react-redux";
 import useGetAllAdminJobs from "@/hooks/useGetAllAdminJobs";
 
-const COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#EC4899", "#14B8A6", "#6366F1"];
+const COLORS = ["#2B64D4", "#1E8A56", "#7040CC", "#CC2E2E", "#4D7FE8", "#2FA66F", "#8B5FD4", "#D85555"];
 const CHART_HEIGHT = 300;
 
 const ChartCard = ({ title, children }) => (

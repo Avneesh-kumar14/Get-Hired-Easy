@@ -43,9 +43,9 @@ const StylizedGlobe = ({ size = 300 }) => {
 
       // Create gradient texture
       const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradient.addColorStop(0, "#1a5f7a");
-      gradient.addColorStop(0.5, "#0d8fab");
-      gradient.addColorStop(1, "#0a4f6b");
+      gradient.addColorStop(0, "#1d4a8f");
+      gradient.addColorStop(0.5, "#2761b5");
+      gradient.addColorStop(1, "#1a3d74");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -409,12 +409,12 @@ const StylizedGlobe = ({ size = 300 }) => {
           <div style="
             width: ${size}px;
             height: ${size}px;
-            background: radial-gradient(circle, #0066ff 0%, #000a1a 100%);
+            background: radial-gradient(circle, #2B64D4 0%, #0a0c12 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #00ffff;
+            color: #7040CC;
             font-size: 20px;
             font-weight: 800;
             text-align: center;

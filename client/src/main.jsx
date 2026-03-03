@@ -8,7 +8,7 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import { store, persistor } from './store/appStore.js'; 
 
-// Suppress network error logs that contain localhost or API paths
+// Suppress network error logs that contain localhost or API
 const originalError = console.error;
 console.error = function(...args) {
   const errorString = args.join(" ");

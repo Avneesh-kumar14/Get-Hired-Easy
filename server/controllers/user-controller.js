@@ -336,11 +336,11 @@ export const updateProfile = async (req, res) => {
         .json({ message: "Invalid email format.", success: false });
     }
 
-    const phoneRegex = /^\d{10}$/;
-    if (!phoneRegex.test(phoneNumber)) {
+    const phoneRegex = /^\d{10,11}$/;
+    if (!phoneRegex.test(phoneNumber.replace(/\D/g, ""))) {
       return res
         .status(400)
-        .json({ message: "Invalid phone number format.", success: false });
+        .json({ message: "Invalid phone number format. Please enter a valid 10-11 digit phone number.", success: false });
     }
 
     const user = await UserModel.findById(userId);
